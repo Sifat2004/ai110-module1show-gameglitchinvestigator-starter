@@ -8,7 +8,10 @@ Answer each question in 3 to 5 sentences. Be specific and honest about what actu
 - List at least two concrete bugs you noticed at the start  
   (for example: "the hints were backwards").
 
----
+---The hints were not correct.On my 3rd attempt at the game, I enterd 100 but it still said to go higher. 
+And I noticed that the game finishes before the last attempt is made. 
+Also, we cannot start a new game once the game is finished.
+Even if we win the game, we sometimes get negetive points.
 
 ## 2. How did you use AI as a teammate?
 
@@ -16,7 +19,7 @@ Answer each question in 3 to 5 sentences. Be specific and honest about what actu
 - Give one example of an AI suggestion that was correct (including what the AI suggested and how you verified the result).
 - Give one example of an AI suggestion that was incorrect or misleading (including what the AI suggested and how you verified the result).
 
----
+---I used co-pilot which is in VS code. Every glicth/ error I found in the code, I asked why was that the case and how would I fix it.
 
 ## 3. Debugging and testing your fixes
 
@@ -25,7 +28,7 @@ Answer each question in 3 to 5 sentences. Be specific and honest about what actu
   and what it showed you about your code.
 - Did AI help you design or understand any tests? How?
 
----
+---I copied the fix copilot provided and ran the app again and when the previous issue was fixed, then I was sure the bug was gone.
 
 ## 4. What did you learn about Streamlit and state?
 
@@ -39,3 +42,6 @@ Answer each question in 3 to 5 sentences. Be specific and honest about what actu
   - This could be a testing habit, a prompting strategy, or a way you used Git.
 - What is one thing you would do differently next time you work with AI on a coding task?
 - In one or two sentences, describe how this project changed the way you think about AI generated code.
+
+
+I would make sure the bug is actually fixed when implementing the solution provided by AI.

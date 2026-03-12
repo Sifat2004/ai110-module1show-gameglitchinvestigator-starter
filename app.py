@@ -30,39 +30,64 @@ def parse_guess(raw: str):
 
 
 def check_guess(guess, secret):
-    if guess == secret:
-        return "Win", "🎉 Correct!"
-
+    # Try to coerce secret to an int so numeric comparisons work even if secret was turned into a string
     try:
+        secret_num = int(secret)
+    except Exception:
+        secret_num = secret
+
+    # If we have a numeric secret, compare numerically
+    if isinstance(secret_num, int):
+        if guess == secret_num:
+            return "Win", "🎉 Correct!"
+        if guess > secret_num:
+            return "Too High", "📉 Go LOWER!"
+        return "Too Low", "📈 Go HIGHER!"
+
+    # Fallback: try direct comparison, then try numeric conversion of both as last resort
+    try:
+        if guess == secret:
+            return "Win", "🎉 Correct!"
         if guess > secret:
-            return "Too High", "📈 Go HIGHER!"
-        else:
-            return "Too Low", "📉 Go LOWER!"
+            return "Too High", "📉 Go LOWER!"
+        return "Too Low", "📈 Go HIGHER!"
     except TypeError:
         g = str(guess)
-        if g == secret:
+        s = str(secret)
+        if g == s:
             return "Win", "🎉 Correct!"
-        if g > secret:
-            return "Too High", "📈 Go HIGHER!"
-        return "Too Low", "📉 Go LOWER!"
+        try:
+            # Try numeric compare as last attempt
+            if int(g) > int(s):
+                return "Too High", "📉 Go LOWER!"
+            return "Too Low", "📈 Go HIGHER!"
+        except Exception:
+            # As a final fallback, lexicographic compare (not ideal but kept defensive)
+            if g > s:
+                return "Too High", "📉 Go LOWER!"
+            return "Too Low", "📈 Go HIGHER!"
 
 
 def update_score(current_score: int, outcome: str, attempt_number: int):
     if outcome == "Win":
-        points = 100 - 10 * (attempt_number + 1)
+        # attempt_number is 1-based (we increment before evaluating).
+        # Use (attempt_number - 1) so first-attempt gives 100, second 90, etc.
+        points = 100 - 10 * (attempt_number - 1)
         if points < 10:
             points = 10
-        return current_score + points
-
-    if outcome == "Too High":
+        new_score = current_score + points
+    elif outcome == "Too High":
         if attempt_number % 2 == 0:
-            return current_score + 5
-        return current_score - 5
+            new_score = current_score + 5
+        else:
+            new_score = current_score - 5
+    elif outcome == "Too Low":
+        new_score = current_score - 5
+    else:
+        new_score = current_score
 
-    if outcome == "Too Low":
-        return current_score - 5
-
-    return current_score
+    # Prevent negative total score
+    return max(0, new_score)
 
 st.set_page_config(page_title="Glitchy Guesser", page_icon="🎮")
 
@@ -93,7 +118,7 @@ if "secret" not in st.session_state:
     st.session_state.secret = random.randint(low, high)
 
 if "attempts" not in st.session_state:
-    st.session_state.attempts = 1
+    st.session_state.attempts = 0
 
 if "score" not in st.session_state:
     st.session_state.score = 0
@@ -133,7 +158,10 @@ with col3:
 
 if new_game:
     st.session_state.attempts = 0
-    st.session_state.secret = random.randint(1, 100)
+    st.session_state.secret = random.randint(low, high)
+    st.session_state.status = "playing"
+    st.session_state.score = 0
+    st.session_state.history = []
     st.success("New game started.")
     st.rerun()
 
